@@ -1,4 +1,4 @@
-from ddgs import DDGS
+from duckduckgo_search import DDGS
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 import requests
