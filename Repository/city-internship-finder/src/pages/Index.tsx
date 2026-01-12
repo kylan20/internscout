@@ -9,7 +9,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSearch = async (city: string, industry: string) => {
-    const API_URL = "https://internscout-backend.onrender.com";
+    const API_URL = "https://internscout-backend.onrender.com/api/search";
     
     const response = await fetch(API_URL, {
       method: "POST",
