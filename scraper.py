@@ -104,8 +104,12 @@ def scrape(city, domains, intents):
     #To prevent duplicates between keyword searches
     seen_urls = set()
 
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
     #Creates the search agent and automatically closes when it is done
-    with DDGS() as ddgs:
+    with DDGS(headers=headers) as ddgs:
         #loop 1: the domain - eg "Machine Learning"
         for domain in domains:
             #loop 2: the intent - eg "Internship"
@@ -128,7 +132,7 @@ def scrape(city, domains, intents):
 
                 #Returns a list of dictionaries with the search results
                 try:
-                    results = ddgs.text(query, max_results=100)
+                    results = ddgs.text(query, backend="html", max_results=100)
                 except Exception as e:
                     print(f"Search error: {e}")
                     continue
