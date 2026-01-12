@@ -129,7 +129,7 @@ def scrape(city, domains, intents):
 
                 #Returns a list of dictionaries with the search results
                 try:
-                    results = ddgs.text(query, backend="lite", max_results=50)
+                    results = ddgs.text(query, backend="api", max_results=50)
                 except Exception as e:
                     print(f"Search error: {e}")
                     continue
