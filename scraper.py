@@ -109,7 +109,7 @@ def scrape(city, domains, intents):
     PROXY = os.environ.get("PROXY_URL")
 
     if not PROXY:
-        print("ERROR: PPROXY_URL not found in environment variables!")
+        print("ERROR: PROXY_URL not found in environment variables!")
         yield {}
         return
 
@@ -140,7 +140,7 @@ def scrape(city, domains, intents):
 
                 #Returns a list of dictionaries with the search results
                 try:
-                    results = ddgs.text(query, backend="lite", max_results=25)
+                    results = ddgs.text(query, backend="html", max_results=25)
                 except Exception as e:
                     print(f"Search error: {e}")
                     continue
