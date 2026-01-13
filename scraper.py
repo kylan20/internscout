@@ -7,6 +7,7 @@ import re
 import time
 import random
 import csv
+import os
 
 
 #These are domains that clutter results but arent actual companies.
@@ -105,8 +106,15 @@ def scrape(city, domains, intents):
     seen_urls = set()
 
     #Proxy used from webshare
-    PROXY = "https://phojmtmo:y14gw6197pqb@142.111.48.253:7030"
+    PROXY = os.environ.get("PROXY_URL")
+
+    if not PROXY:
+        print("ERROR: PPROXY_URL not found in environment variables!")
+        yield {}
+        return
+
     print(f"Connecting via proxy: {PROXY}")
+
 
     #Creates the search agent and automatically closes when it is done
     with DDGS(proxy=PROXY) as ddgs:
