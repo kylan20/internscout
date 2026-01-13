@@ -62,28 +62,30 @@ def search_companies():
     city = data.get('city', 'Troy, NY')
 
     #get user IP
-    user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        #user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
     #log the activity
-    log_message = f"USER_ACTION: IP={user_ip} | City={city} | Domains={data.get('domains')} | Time={datetime.now()}"
+        #log_message = f"USER_ACTION: IP={user_ip} | City={city} | Domains={data.get('domains')} | Time={datetime.now()}"
     #print to the local terminal and the Render dashboard
-    print(log_message)
-    logger.info(log_message)
+        #print(log_message)
+        #logger.info(log_message)
 
-    raw_domains = data.get('domains', ["software"])
+        #raw_domains = data.get('domains', ["software"])
     
     #expand Keywords using ConceptNet
-    final_keywords = set()
-    for d in raw_domains:
-        final_keywords.update(get_related_terms(d))
-        time.sleep(random.uniform(1.0, 1.5))
+        #final_keywords = set()
+        #for d in raw_domains:
+            #final_keywords.update(get_related_terms(d))
+            #time.sleep(random.uniform(1.0, 1.5))
     
-    search_terms = list(final_keywords)
+        #search_terms = list(final_keywords)
     
     #universal Intents (Works for 95% of businesses)
-    intents = ["company", "agency", "firm", "services", "studio", "group"]
+        #intents = ["company", "agency", "firm", "services", "studio", "group"]
 
-
+    search_terms = data.get('domains', ["software"])
+    
+    intents = ["company", "agency"]
 
     print(f"Received request for {city}...")
 

@@ -115,6 +115,12 @@ def scrape(city, domains, intents):
 
     print(f"Connecting via proxy: {PROXY}")
 
+    #For requests search
+    proxies = {
+        'http': PROXY,
+        'https': PROXY
+    }
+
 
     #Creates the search agent and automatically closes when it is done
     with DDGS(proxy=PROXY) as ddgs:
@@ -140,12 +146,18 @@ def scrape(city, domains, intents):
 
                 #Returns a list of dictionaries with the search results
                 try:
-                    results = ddgs.text(query, backend="html", max_results=25)
+                    results = ddgs.text(query, backend="api", max_results=25)
+                    print(f"   → Got {len(results)} raw results")
+    
+                    if results:
+                        print(f"   → First result: {results[0].get('title', 'NO TITLE')[:50]}")
+
                 except Exception as e:
                     print(f"Search error: {e}")
                     continue
 
                 if not results:
+                    print(f"   → No results for this query, trying next...")
                     continue
 
                 #Clean the data - right now its a list of dic's
@@ -160,8 +172,18 @@ def scrape(city, domains, intents):
 
                     try:
                         # 1. Fetch Page FIRST
-                        print(f"   Checking: {title[:30]}...", end="")
-                        resp = requests.get(url, timeout=5, headers={'User-Agent': 'Mozilla/5.0'})
+                        print(f"   Fetching: {title[:30]}...", end="")
+                        resp = requests.get(
+                            url, 
+                            timeout=10,
+                            proxies=proxies,  # ← Use the proxy
+                            headers={
+                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                                'Accept-Language': 'en-US,en;q=0.9',
+                                'Referer': 'https://www.google.com/'
+                            }
+                        )
                         if resp.status_code != 200: continue
                         soup = BeautifulSoup(resp.text, 'html.parser')
                         
@@ -181,8 +203,14 @@ def scrape(city, domains, intents):
                         else:
                             print(f"({reason})")
 
+                    except requests.exceptions.Timeout:
+                        print(" TIMEOUT")
+                    except requests.exceptions.ProxyError:
+                        print(" PROXY_ERROR")
+                    except requests.exceptions.ConnectionError:
+                        print(" CONNECTION_ERROR")
                     except Exception as e:
-                        print(f"Error")
+                        print(f" ERROR: {type(e).__name__}")
 
                     #sleep to avoid IP ban
                     time.sleep(random.uniform(1.5, 3.0))
