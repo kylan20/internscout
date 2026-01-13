@@ -1,4 +1,4 @@
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 import requests
@@ -131,7 +131,8 @@ def scrape(city, domains, intents):
                 print(f"Checking keyword: '{domain} {intent}'")
 
                 #Build query based off of these keyword(s)
-                query = f'"{domain} {intent}" "{city}" site:.com -site:linkedin.com -site:indeed.com'
+                #query = f'"{domain} {intent}" "{city}" site:.com -site:linkedin.com -site:indeed.com'
+                query = f'"{domain} {intent}" near "{city}"'
                 #This only searches for company homepages and excludes linkedin/indeed postings
 
                 #text(
@@ -146,14 +147,18 @@ def scrape(city, domains, intents):
 
                 #Returns a list of dictionaries with the search results
                 try:
-                    results = ddgs.text(query, backend="api", max_results=25)
+                    results = ddgs.text(query, max_results=25)
                     print(f"   → Got {len(results)} raw results")
     
                     if results:
                         print(f"   → First result: {results[0].get('title', 'NO TITLE')[:50]}")
+                    else:
+                        print(f"   → DEBUG: Empty results - might be bot detection")
 
                 except Exception as e:
                     print(f"Search error: {e}")
+                    import traceback
+                    traceback.print_exc()
                     continue
 
                 if not results:
@@ -172,7 +177,7 @@ def scrape(city, domains, intents):
 
                     try:
                         # 1. Fetch Page FIRST
-                        print(f"   Fetching: {title[:30]}...", end="")
+                        print(f"   Fetching: {title[:30]}...", end="", flush=True)
                         resp = requests.get(
                             url, 
                             timeout=10,
@@ -184,7 +189,9 @@ def scrape(city, domains, intents):
                                 'Referer': 'https://www.google.com/'
                             }
                         )
-                        if resp.status_code != 200: continue
+                        if resp.status_code != 200:
+                            print(f" [HTTP {resp.status_code}]")
+                            continue
                         soup = BeautifulSoup(resp.text, 'html.parser')
                         
                         # 2. Validate Content
