@@ -104,9 +104,12 @@ def scrape(city, domains, intents):
     #To prevent duplicates between keyword searches
     seen_urls = set()
 
+    #Proxy used from webshare
+    PROXY = "https://phojmtmo:y14gw6197pqb@142.111.48.253:7030"
+    print(f"Connecting via proxy: {PROXY}")
 
     #Creates the search agent and automatically closes when it is done
-    with DDGS() as ddgs:
+    with DDGS(proxy=PROXY) as ddgs:
         #loop 1: the domain - eg "Machine Learning"
         for domain in domains:
             #loop 2: the intent - eg "Internship"
